@@ -8,11 +8,11 @@ class Stock(object):
     :TODO: Consider moving calculation functions out and retaining pricing for a period of time to avoid constant recalc
     """
 
-    trades = []
-
-    def __init__(self, symbol, last_dividend):
+    def __init__(self, symbol, par_value, last_dividend):
         self.symbol = symbol.upper()
+        self.par_value = par_value
         self.last_dividend = last_dividend
+        self.trades = []
 
     def calculate_dividend_yield(self):
         return self.last_dividend / self.calculate_stock_price()
@@ -38,11 +38,12 @@ class Stock(object):
             total_price_times_quantity += trade.price * trade.quantity
             total_quantity += trade.quantity
 
-        price = 0
         if total_quantity > 0:
-             price = total_price_times_quantity / total_quantity
+            return total_price_times_quantity / total_quantity
 
-        return price
+        else:  # No recent trades, return par value just as a sensible default
+            return self.par_value
+
 
     def calculate_price_to_earnings_ratio(self):
         return self.calculate_stock_price() / self.calculate_dividend_yield()
@@ -62,9 +63,13 @@ class PreferredStock(Stock):
     calculated.
     """
 
-    def __init__(self, symbol, last_dividend, fixed_dividend):
-        super(PreferredStock, self).__init__(symbol, last_dividend)
+    def __init__(self, symbol, par_value, last_dividend, fixed_dividend):
+        super(PreferredStock, self).__init__(symbol, par_value, last_dividend)
         self.fixed_dividend = fixed_dividend
 
-    def calculate_dividend_yield(self, stock):
-        pass
+    def calculate_dividend_yield(self):
+        """
+        For Preferred Stocks this is calculated as the fixed dividend * par_value / stock price
+        :return:
+        """
+        return (self.fixed_dividend * self.par_value) / self.calculate_stock_price()

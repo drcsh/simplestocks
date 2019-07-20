@@ -8,8 +8,9 @@ from trades import Trade, InvalidTradeException
 class test_stock(unittest.TestCase):
 
     def setUp(self):
-        self.stock_dividend_5 = Stock("TEST5", 100, 5)
-        self.stock_dividend_0 = Stock("TEST0", 100, 0)
+
+        self.stock_dividend_5 = CommonStock("TEST5", 100, 5)
+        self.stock_dividend_0 = CommonStock("TEST0", 100, 0)
 
         trade_100_at_500 = Trade(time.time() - 60 , 100, Trade.BUY_INDICATOR, 500)
         trade_100_at_1000 = Trade(time.time() - 60, 100, Trade.BUY_INDICATOR, 1000)
@@ -31,21 +32,21 @@ class test_stock(unittest.TestCase):
 
         # Base case, no trades, returns par value
         self.stock_dividend_0.trades = self.no_trades
-        self.assertEquals(self.stock_dividend_0.calculate_stock_price(), self.stock_dividend_0.par_value)
+        self.assertEqual(self.stock_dividend_0.calculate_stock_price(), self.stock_dividend_0.par_value)
 
         # Easy case, one trade at 500
         self.stock_dividend_0.trades = self.one_trade_at_500
-        self.assertEquals(self.stock_dividend_0.calculate_stock_price(), 500)
+        self.assertEqual(self.stock_dividend_0.calculate_stock_price(), 500)
 
         # Old trades should get ignored
         self.stock_dividend_0.trades = self.one_trade_at_500_and_old_trade
-        self.assertEquals(self.stock_dividend_0.calculate_stock_price(), 500)
+        self.assertEqual(self.stock_dividend_0.calculate_stock_price(), 500)
 
         # Check that something resembling actual trades works
         self.stock_dividend_0.trades = self.three_trades
 
         expected_price = 105  # ((100*100)+(100*105)+(100*110)) / 300 = 105
-        self.assertEquals(self.stock_dividend_0.calculate_stock_price(), expected_price)
+        self.assertEqual(self.stock_dividend_0.calculate_stock_price(), expected_price)
 
 
     def test_dividend_yield(self):
@@ -54,10 +55,10 @@ class test_stock(unittest.TestCase):
         with mock.patch.object(Stock, 'calculate_stock_price', return_value=500):
 
             # common stock dividend 5, value = 500 yield = 0.01
-            self.assertEquals(self.stock_dividend_5.calculate_dividend_yield(), 0.01)
+            self.assertEqual(self.stock_dividend_5.calculate_dividend_yield(), 0.01)
 
             # common stock dividend 0
-            self.assertEquals(self.stock_dividend_0.calculate_dividend_yield(), 0)
+            self.assertEqual(self.stock_dividend_0.calculate_dividend_yield(), 0)
 
 class test_preferred_stock(unittest.TestCase):
     """
@@ -75,10 +76,10 @@ class test_preferred_stock(unittest.TestCase):
         with mock.patch.object(PreferredStock, 'calculate_stock_price', return_value=100):
 
             # 0 fixed dividend = 0 yield
-            self.assertEquals(self.stock_f_dividend_0.calculate_dividend_yield(), 0)
+            self.assertEqual(self.stock_f_dividend_0.calculate_dividend_yield(), 0)
 
             # 5 fixed dividend * par value 100 / stock price 100 = 5 yield
-            self.assertEquals(self.stock_f_dividend_5.calculate_dividend_yield(), 5)
+            self.assertEqual(self.stock_f_dividend_5.calculate_dividend_yield(), 5)
 
 if __name__ == '__main__':
     unittest.main()

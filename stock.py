@@ -24,12 +24,12 @@ class Stock(ABC):
         """
         pass
 
-    def calculate_stock_price(self):
+    def calculate_price(self):
         """
         Calculate the stock price in pence from the sum of the price * quantity, divided by the quantity of all trades
         in the last 15 minutes.
 
-        In a live system you'd probably want to rate-limit this. 
+        In a live system you'd probably want to rate-limit this.
 
         :return: Price in Pence
         :rtype int:
@@ -60,7 +60,7 @@ class Stock(ABC):
         :return:
         :rtype float:
         """
-        return self.calculate_stock_price() / self.calculate_dividend_yield()
+        return self.calculate_price() / self.calculate_dividend_yield()
 
 
 
@@ -75,7 +75,7 @@ class CommonStock(Stock):
         For Common Stocks this is just the last dividend / stock price
         :return:
         """
-        return self.last_dividend / self.calculate_stock_price()
+        return self.last_dividend / self.calculate_price()
 
 
 class PreferredStock(Stock):
@@ -94,4 +94,4 @@ class PreferredStock(Stock):
         For Preferred Stocks this is calculated as the fixed dividend * par_value / stock price
         :return:
         """
-        return (self.fixed_dividend * self.par_value) / self.calculate_stock_price()
+        return (self.fixed_dividend * self.par_value) / self.calculate_price()

@@ -7,6 +7,9 @@ class InvalidTradeException(Exception):
 
 
 class Trade(object):
+    """
+    Represents a trade (buy/sell) of any arbitrary stock. Would want to foreign key this to a stock if there was a DB
+    """
     BUY_INDICATOR = "BUY"
     SELL_INDICATOR = "SELL"
 

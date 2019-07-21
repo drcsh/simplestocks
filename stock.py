@@ -1,6 +1,8 @@
 import time
 from abc import ABC, abstractclassmethod
 
+from trade import Trade
+
 
 class Stock(ABC):
     """
@@ -11,6 +13,11 @@ class Stock(ABC):
     TYPE_COMMON = "Common"
 
     def __init__(self, symbol, par_value, last_dividend):
+
+        assert len(symbol) < 4
+        assert isinstance(par_value, int)
+        assert isinstance(last_dividend, int)
+
         self.symbol = symbol.upper()
         self.par_value = par_value
         self.last_dividend = last_dividend
@@ -23,6 +30,19 @@ class Stock(ABC):
         :return:
         """
         pass
+
+    def record_trade(self, trade):
+        """
+        Record a trade on this Stock.
+
+        :param trade:
+        :return:
+        :raises TypeError: did not receive a Trade object.
+        """
+        if not isinstance(trade, Trade):
+            raise TypeError("Can only record Trade objects!")
+
+        self.trades.append(trade)
 
     def calculate_price(self):
         """
@@ -80,14 +100,18 @@ class CommonStock(Stock):
 
 class PreferredStock(Stock):
     """
-    PreferredStocks differ from CommonStocks by having a fixed dividend rate, which effects how the dividend yield is
-    calculated.
+    PreferredStocks differ from CommonStocks by having a fixed dividend rate which is a percentage of the par value,
+    which effects how the dividend yield is calculated.
     """
     type = Stock.TYPE_PREFERRED
 
-    def __init__(self, symbol, par_value, last_dividend, fixed_dividend):
+    def __init__(self, symbol, par_value, last_dividend, fixed_dividend_percent):
         super(PreferredStock, self).__init__(symbol, par_value, last_dividend)
-        self.fixed_dividend = fixed_dividend
+
+        # fixed dividend is a percentage value
+        assert 0.0 <= fixed_dividend_percent <= 1.0
+
+        self.fixed_dividend = fixed_dividend_percent
 
     def calculate_dividend_yield(self):
         """

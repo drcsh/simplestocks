@@ -77,11 +77,15 @@ class Stock(ABC):
 
     def calculate_price_to_earnings_ratio(self):
         """
-        Calculate the price to earnings ratio. This is the stock price / dividend yield.
+        Calculate the price to earnings ratio. This is the stock price / dividend.
         :return:
         :rtype float:
         """
-        return self.calculate_price() / self.calculate_dividend_yield()
+        if self.last_dividend > 0:
+            return self.calculate_price() / self.last_dividend
+
+        else:
+            return 0.0
 
 
 

@@ -80,6 +80,16 @@ class StockTests(object):
         expected_price = 105  # ((100*100)+(100*105)+(100*110)) / 300 = 105
         self.assertEqual(self.stock_dividend_0.calculate_price(), expected_price)
 
+    def test_p_to_e_ratio_basic(self):
+        # basic test that we can work out a p/e ratio with a stock price of 100 and a last dividend of 5
+        with mock.patch.object(Stock, 'calculate_price', return_value=100):
+            self.assertEqual(self.stock_dividend_5.calculate_price_to_earnings_ratio(), 20)
+
+    def test_p_to_e_ratio_with_zero_dividend(self):
+        # make sure that we don't do a div/0
+        with mock.patch.object(Stock, 'calculate_price', return_value=100):
+            self.assertEqual(self.stock_dividend_0.calculate_price_to_earnings_ratio(), 0)
+
 class TestCommonStock(unittest.TestCase, StockTests):
 
     def setUp(self):

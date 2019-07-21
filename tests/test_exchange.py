@@ -34,7 +34,7 @@ class test_exchange(unittest.TestCase):
             "100": self.stock_100,
             "105": self.stock_105
         }
-        self.basic_exchange = Exchange(self.basic_stocks)
+        self.basic_exchange = Exchange("TESTEX", self.basic_stocks)
 
     def test_get_stock_basic(self):
         # check we get the right stock if we ask for it
@@ -71,14 +71,14 @@ class test_exchange(unittest.TestCase):
 
     def test_all_share_index_basic(self):
         # basic test case, 1 stock of value 100, means the index value is 100
-        exchange = Exchange({"100": self.stock_100})
+        exchange = Exchange("TESTEX", {"100": self.stock_100})
         all_share_index = exchange.calculate_all_share_index()
 
         self.assertEqual(all_share_index, 100)
 
     def test_all_share_index_empty(self):
         # Edge case, no stocks
-        exchange = Exchange({})
+        exchange = Exchange("TESTEX", {})
         all_share_index = exchange.calculate_all_share_index()
 
         self.assertEqual(all_share_index, 0)
@@ -90,7 +90,7 @@ class test_exchange(unittest.TestCase):
                   "110": self.stock_110,
                   "200": self.stock_200
                   }
-        exchange = Exchange(stocks)
+        exchange = Exchange("TESTEX", stocks)
         all_share_index = exchange.calculate_all_share_index()
 
         self.assertAlmostEqual(all_share_index, 123.283, places=3)  # note rounding.

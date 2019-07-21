@@ -21,6 +21,7 @@ class Stock(ABC):
         self.symbol = symbol.upper()
         self.par_value = par_value
         self.last_dividend = last_dividend
+        self.fixed_dividend = None
         self.trades = []
 
     @abstractclassmethod

@@ -15,7 +15,8 @@ class InvalidStockException(Exception):
 
 class ExchangeBuilder(object):
 
-    def _load_stocks(self):
+    @staticmethod
+    def _load_stocks():
         """
         Stub. Should connect to a DB or something sensible
 
@@ -27,13 +28,14 @@ class ExchangeBuilder(object):
             "TEA": CommonStock("TEA", 100, 0),
             "POP": CommonStock("POP", 100, 8),
             "ALE": CommonStock("ALE", 60, 23),
-            "GIN": PreferredStock("GIN", 100, 8, 2),
+            "GIN": PreferredStock("GIN", 100, 8, 0.02),
             "JOE": CommonStock("JOE", 100, 8),
         }
 
         return stocks
 
-    def build(self):
+    @staticmethod
+    def build():
         """
         Creates an Exchange with some default stocks in it.
 
@@ -42,8 +44,8 @@ class ExchangeBuilder(object):
         :rtype Exchange:
         """
 
-        stocks = self._load_stocks()
-        return Exchange(stocks)
+        stocks = ExchangeBuilder._load_stocks()
+        return Exchange("Global Beverage Corporation Exchange", stocks)
 
 
 class Exchange(object):
@@ -51,10 +53,11 @@ class Exchange(object):
         Represents an exchange. Holds a number of stocks which can be traded.
     """
 
-    def __init__(self, stocks):
+    def __init__(self, name, stocks):
 
         assert isinstance(stocks, dict)
 
+        self.name = name
         self.stocks = stocks
 
     def get_stock(self, stock_symbol):

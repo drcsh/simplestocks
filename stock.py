@@ -28,6 +28,7 @@ class Stock(ABC):
     def calculate_dividend_yield(self):
         """
         Calculated differently depending on stock type. Implemented by child classes.
+
         :return:
         """
         pass
@@ -74,10 +75,10 @@ class Stock(ABC):
         else:  # No recent trades, return par value just as a sensible default
             return self.par_value
 
-
     def calculate_price_to_earnings_ratio(self):
         """
         Calculate the price to earnings ratio. This is the stock price / dividend.
+
         :return:
         :rtype float:
         """
@@ -86,7 +87,6 @@ class Stock(ABC):
 
         else:
             return 0.0
-
 
 
 class CommonStock(Stock):

@@ -1,5 +1,5 @@
 from tabulate import tabulate
-from exchange import Exchange, ExchangeBuilder, InvalidStockException
+from exchange import ExchangeBuilder, InvalidStockException
 from trade import InvalidTradeException
 
 """
@@ -32,26 +32,26 @@ class CLI(object):
 
         :return:
         """
-        print("Weclome to SimpleStocks, trading on the f{exchange.name}")
+        print(f"Welcome to SimpleStocks. You are trading on the {self.exchange}.")
         while True:
-            input = self._get_user_action()
+            input = self._prompt_user("Enter Action: (a)ll share index, (l)ist, (b)uy, (s)ell, (q)uit")
             try:
                 self.interpret_user_action_request(input)
-            except UserInterrupt as e:
+            except UserInterrupt:
                 print("Action Cancelled")
 
             print("")  # Add an extra newline before asking for their next action
 
     def interpret_user_action_request(self, input):
         """
-        Interpret the user's request to do something
+        Interpret the user's request to do something and present that functionality.
         :param input:
         :return:
         """
-
+        input = input.lower()
         # quit
         if input in ["exit", "q", "quit"]:
-            print("Thank you for using SimpleStocks")
+            print("Thank you for using SimpleStocks!")
             exit(0)
 
         if input in ["all share index", "all", "index", "a"]:
@@ -78,7 +78,8 @@ class CLI(object):
         Shows the All Share Index
         :return:
         """
-        print(f"{self.exchange.name} All Share Index: {self.exchange.calculate_all_share_index()}")
+        raw_index = self.exchange.calculate_all_share_index()
+        print(f" {self.exchange.name} All Share Index: {round(raw_index, 3)}")
 
     def _show_stock_list(self):
         """
@@ -86,7 +87,7 @@ class CLI(object):
         :return:
         """
 
-        print("Stock List:")
+        print(" Stock List:")
 
         headers = ["Symbol", "Type", "Last Dividend", "Fixed Dividend", "Dividend Yield", "P/E Ratio", "Price"]
 
@@ -96,8 +97,8 @@ class CLI(object):
                    stock.type,
                    stock.last_dividend,
                    stock.fixed_dividend or '',
-                   stock.calculate_dividend_yield(),
-                   stock.calculate_price_to_earnings_ratio(),
+                   round(stock.calculate_dividend_yield(), 3),
+                   round(stock.calculate_price_to_earnings_ratio(), 3),
                    stock.calculate_price()]
             table.append(row)
 
@@ -154,9 +155,8 @@ class CLI(object):
         # Keep prompting them until they choose a valid stock or quit
         valid_stock = False
         while not valid_stock:
-            stock_symbol = input(
-                f"Please enter the stock symbol (e.g. ABC) of the one you wish to {transaction_name}, or c to cancel. "
-                f"\n>"
+            stock_symbol = self._prompt_user(
+                f"Please enter the stock symbol (e.g. ABC) of the one you wish to {transaction_name}, or c to cancel."
             )
 
             self._check_input_for_user_cancel(stock_symbol)
@@ -176,30 +176,32 @@ class CLI(object):
 
         while not valid_quantity:
             try:
-                quantity = input(f"How many stocks would you like to {transaction_name}? (or c to cancel) \n>")
+                quantity = self._prompt_user(
+                    f"How many stocks would you like to {transaction_name}? (or c to cancel)"
+                )
                 self._check_input_for_user_cancel(quantity)
 
                 quantity = int(quantity)
                 valid_quantity = True
 
-            except ValueError as e:
+            except ValueError:
                 print("Sorry, the quantity was invalid. Please enter a whole number > 0.")
 
         valid_price = False
 
         while not valid_price:
             try:
-                price = input(f"How much (in pennies) would you like to {transaction_name} them for? (or c to cancel) "
-                              f"\n>")
+                price = self._prompt_user(
+                    f"How much (in pennies) would you like to {transaction_name} them for? (or c to cancel)"
+                )
                 self._check_input_for_user_cancel(price)
 
                 price = int(price)
                 valid_price = True
 
-            except ValueError as e:
+            except ValueError:
                 print("Sorry, the price was invalid. Please enter a whole number of pennies > 0. For example, if you "
                       f"want to {transaction_name} at £1.50 per stock, please type 150.")
-
 
         return stock_symbol, quantity, price
 
@@ -224,19 +226,21 @@ class CLI(object):
         :rtype bool:
         """
 
-        confirm = input(f"{msg} (y/n) \n>>>")
-        confirm = confirm.strip().lower()
+        confirm = self._prompt_user(f"{msg} (y/n)")
 
-        return confirm in ['y', 'yes']
+        return confirm.lower() in ['y', 'yes']
 
-    def _get_user_action(self):
+    def _prompt_user(self, msg):
         """
-        Gives rthe user a list of actions and asks them to select one. Returns their input stripped and lowercase.
+        Utility function for prompting the user for input. Adds a newline before and after the message,
+        as well as prompt character.
 
-        :return:
+        :param str msg: message to display on prompt
+        :return: Output. Stripped.
+        :rtype str:
         """
-        raw_input = input("Enter Action: (a)ll share index, (l)ist, (b)uy, (s)ell, (q)uit \n> ")
-        return raw_input.strip().lower()
+        raw_input = input(f"\n{msg}\n> ")
+        return raw_input.strip()
 
 
 if __name__ == '__main__':

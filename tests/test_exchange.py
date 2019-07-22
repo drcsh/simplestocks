@@ -1,8 +1,7 @@
-import unittest, time
+import unittest
 from unittest import mock
 
 from exchange import Exchange, InvalidStockException
-from stock import Stock
 from trade import Trade
 
 
@@ -16,6 +15,7 @@ def quick_mock_stock(price):
     stock = mock.Mock()
     stock.calculate_price.return_value = price
     return stock
+
 
 class test_exchange(unittest.TestCase):
     """
@@ -42,7 +42,7 @@ class test_exchange(unittest.TestCase):
 
     def test_get_stock_does_not_exist(self):
         # edge case: check we get an appropriate exception for bad input
-        self.assertRaises(InvalidStockException,self.basic_exchange.get_stock, stock_symbol='DOESNOTEXIST')
+        self.assertRaises(InvalidStockException, self.basic_exchange.get_stock, stock_symbol='DOESNOTEXIST')
 
     def test_buy_stock(self):
         with mock.patch.object(self.stock_100, 'record_trade') as mockstock:
@@ -67,7 +67,6 @@ class test_exchange(unittest.TestCase):
             self.assertEqual(trade.quantity, 200)
             self.assertEqual(trade.price, 99)
             self.assertEqual(trade.indicator, Trade.SELL_INDICATOR)
-
 
     def test_all_share_index_basic(self):
         # basic test case, 1 stock of value 100, means the index value is 100

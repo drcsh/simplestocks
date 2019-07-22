@@ -1,4 +1,5 @@
-import unittest, time
+import unittest
+import time
 from unittest import mock
 
 from stock import Stock, CommonStock, PreferredStock
@@ -57,7 +58,6 @@ class StockTests(object):
         self.assertEqual(last_trade, self.trade_100_at_110)
         self.assertEqual(second_last_trade, self.trade_100_at_100)
 
-
     def test_calculate_price_basic(self):
         # Easy case, one trade at 500
         self.stock_dividend_0.trades = self.one_trade_at_500
@@ -89,6 +89,7 @@ class StockTests(object):
         # make sure that we don't do a div/0
         with mock.patch.object(Stock, 'calculate_price', return_value=100):
             self.assertEqual(self.stock_dividend_0.calculate_price_to_earnings_ratio(), 0)
+
 
 class TestCommonStock(unittest.TestCase, StockTests):
 

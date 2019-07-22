@@ -1,6 +1,5 @@
 import time
 
-from stock import Stock, CommonStock, PreferredStock
 from trade import Trade
 
 from functools import reduce
@@ -18,11 +17,12 @@ class ExchangeBuilder(object):
     @staticmethod
     def _load_stocks():
         """
-        Stub. Should connect to a DB or something sensible
+        Placeholder. Should connect to a DB or something sensible
 
         :return: List of stocks to be loaded into the exchange
         :rtype dict: stock_symbol : Stock
         """
+        from stock import CommonStock, PreferredStock
 
         stocks = {
             "TEA": CommonStock("TEA", 100, 0),
@@ -54,11 +54,21 @@ class Exchange(object):
     """
 
     def __init__(self, name, stocks):
+        """
+        Initialize the Exchange. Requires a name (for the exchange) and a dictionary of Stocks which are listed on it,
+        indexed by Stock.symbol
+
+        :param str name:
+        :param dict stocks:
+        """
 
         assert isinstance(stocks, dict)
 
         self.name = name
         self.stocks = stocks
+
+    def __str__(self):
+        return self.name
 
     def get_stock(self, stock_symbol):
         """
